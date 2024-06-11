@@ -1,0 +1,115 @@
+--- a/include/Settings.hpp
++++ b/include/Settings.hpp
+@@ -135,6 +135,7 @@ typedef struct thread_Settings {
+     // int's
+     int mThreads;                   // -P
+     int mTOS;                       // -S
++    int mMACUP;                     // -A
+ #if WIN32
+     SOCKET mSock;
+ #else
+--- a/include/version.h
++++ b/include/version.h
+@@ -1,4 +1,4 @@
+-#define IPERF_VERSION "2.0.13"
++#define IPERF_VERSION "2.0.13 OpenWrt-V2X patch"
+ #define IPERF_VERSION_DATE "21 Jan 2019"
+ #define IPERF_VERSION_MAJORHEX 0x00020000
+ #define IPERF_VERSION_MINORHEX 0x000D0003
+--- a/src/Locale.c
++++ b/src/Locale.c
+@@ -103,6 +103,7 @@ Server specific:\n\
+   -s, --server             run in server mode\n\
+   -t, --time      #        time in seconds to listen for new connections as well as to receive traffic (default not set)\n\
+       --udp-histogram #,#  enable UDP latency histogram(s) with bin width and count, e.g. 1,1000=1(ms),1000(bins)\n\
++  -A, --accesscategory <AC> Forces a certain EDCA MAC access category to be used (BK, BE, VI, VO)\n\
+   -B, --bind <ip>[%<dev>]  bind to multicast address and optional device\n\
+   -H, --ssm-host <ip>      set the SSM source, use with -B for (S,G) \n\
+   -U, --single_udp         run in single threaded UDP mode\n\
+@@ -125,6 +126,7 @@ Client specific:\n\
+ "  -n, --num       #[kmgKMG]    number of bytes to transmit (instead of -t)\n\
+   -r, --tradeoff           Do a bidirectional test individually\n\
+   -t, --time      #        time in seconds to transmit for (default 10 secs)\n\
++  -A, --accesscategory <AC> Forces a certain EDCA MAC access category to be used (BK, BE, VI, VO)\n\
+   -B, --bind [<ip> | <ip:port>] bind ip (and optional port) from which to source traffic\n\
+   -F, --fileinput <name>   input the data to be transmitted from a file\n\
+   -I, --stdin              input the data to be transmitted from stdin\n\
+--- a/src/PerfSocket.cpp
++++ b/src/PerfSocket.cpp
+@@ -155,6 +155,15 @@ void SetSocketOptions( thread_Settings *
+     }
+ #endif
+ 
++   	// set MAC AC (access category) field, if specified only (i.e. if mMACUP != -1)
++    // AC is set starting from user priorities (UP)
++	if ( inSettings->mMACUP >= 0 ) {
++		int  up = inSettings->mMACUP;
++		Socklen_t len = sizeof(up);
++		int rc = setsockopt( inSettings->mSock, SOL_SOCKET, SO_PRIORITY, (char*) &up, len );
++		WARN_errno( rc == SOCKET_ERROR, "setsockopt SO_PRIORITY" );
++	}
++
+     if ( !isUDP( inSettings ) ) {
+         // set the TCP maximum segment size
+         setsock_tcp_mss( inSettings->mSock, inSettings->mMSS );
+--- a/src/Settings.cpp
++++ b/src/Settings.cpp
+@@ -131,6 +131,7 @@ const struct option long_options[] =
+ {"realtime",         no_argument, NULL, 'z'},
+ 
+ // more esoteric options
++{"accesscategory",  required_argument, NULL, 'A'},
+ {"bind",       required_argument, NULL, 'B'},
+ {"compatibility",    no_argument, NULL, 'C'},
+ {"daemon",           no_argument, NULL, 'D'},
+@@ -198,6 +199,7 @@ const struct option env_options[] =
+ {"IPERF_REPORTSTYLE",required_argument, NULL, 'y'},
+ 
+ // more esoteric options
++{"IPERF_MACAC",        required_argument, NULL, 'A'},
+ {"IPERF_BIND",       required_argument, NULL, 'B'},
+ {"IPERF_COMPAT",           no_argument, NULL, 'C'},
+ {"IPERF_DAEMON",           no_argument, NULL, 'D'},
+@@ -218,7 +220,8 @@ const struct option env_options[] =
+ 
+ #define SHORT_OPTIONS()
+ 
+-const char short_options[] = "1b:c:def:hi:l:mn:o:p:rst:uvw:x:y:zB:CDF:H:IL:M:NP:RS:T:UVWXZ:";
++// Edited to add the A: (A + 1 argument) short option
++const char short_options[] = "1b:c:def:hi:l:mn:o:p:rst:uvw:x:y:zA:B:CDF:IL:M:NP:RS:T:UVWZ:";
+ 
+ /* -------------------------------------------------------------------
+  * defaults
+@@ -279,6 +282,7 @@ void Settings_Initialize( thread_Setting
+     //main->mThreads      = 0;           // -P,
+     //main->mRemoveService = false;      // -R,
+     //main->mTOS          = 0;           // -S,  ie. don't set type of service
++    main->mMACUP        = -1;            // -A (set to an invalid number as default -> with -1 no setsockopt will be called for AC)
+     main->mTTL          = -1;            // -T,  link-local TTL
+     //main->mDomain     = kMode_IPv4;    // -V,
+     //main->mSuggestWin = false;         // -W,  Suggest the window size.
+@@ -692,6 +696,24 @@ void Settings_Interpret( char option, co
+             mExtSettings->mTOS = strtol( optarg, NULL, 0 );
+             break;
+ 
++        case 'A': // 802.11p/802.11e MAC layer access categories
++            // Mapping between UP (0 to 7) and AC (BK to VO)
++            if(strcmp(optarg,"BK") == 0) {
++                mExtSettings->mMACUP=1; // UP=1 (2) is AC_BK
++            } else if(strcmp(optarg,"BE") == 0) {
++                mExtSettings->mMACUP=0; // UP=0 (3) is AC_BE
++            } else if(strcmp(optarg,"VI") == 0) {
++                mExtSettings->mMACUP=4; // UP=4 (5) is AC_VI
++            } else if(strcmp(optarg,"VO") == 0) {
++                mExtSettings->mMACUP=6; // UP=6 (7) is AC_VO
++            } else {
++                // Leave to default (-1), i.e. no AC is set to socket, and print error
++                fprintf(stderr, "Invalid AC specified with -A\nValid ones are: BK, BE, VI, VO\nNo AC will be set\n");
++            }
++
++            //mExtSettings->mMACUP = strtol( optarg, NULL, 0 );
++            break;
++
+         case 'T': // time-to-live for both unicast and multicast
+             mExtSettings->mTTL = atoi( optarg );
+             break;
