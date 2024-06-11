@@ -145,11 +145,6 @@ void Client::mySockInit (void) {
     // Socket is carried both by the object and the thread
     mSettings->mSock=mySocket;
     SetSocketOptions(mSettings);
-
-	// Enable broadcasting
-	int broadcastEnable=1;
-    int ret=setsockopt(mySocket, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable));
-	
     SockAddr_localAddr(mSettings);
     SockAddr_remoteAddr(mSettings);
     // do this bind to device after IP addr name lookups per above
