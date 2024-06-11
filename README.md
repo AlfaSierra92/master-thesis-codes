@@ -1,7 +1,7 @@
 ## iPerf AC
 A customized iPerf with Access Categories (BK, BE, VI, VO).
 Currently extremely work in progress.
-Because patch file comes from a different iPerf version, it must be applied manually.
+Because patch file comes from a different iPerf version, it must be applied manually (but in this case is already applied).
 
 ### Notes
 
