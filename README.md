@@ -1,3 +1,10 @@
+## iPerf AC
+A customized iPerf with Access Categories (BK, BE, VI, VO).
+Currently extremely work in progress.
+Because patch file comes from a different iPerf version, it must be applied manually.
+
+### Notes
+
 This is Iperf v2.0.x, a tool for measuring Internet bandwidth performance.
 See the doc directory for more documentation.
 
