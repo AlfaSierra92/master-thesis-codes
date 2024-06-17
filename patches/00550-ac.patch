@@ -1,0 +1,15 @@
+--- a/net/mac80211/wme.c        2024-06-17 11:16:29
++++ b/net/mac80211/wme.c        2024-06-17 11:17:12
+@@ -176,9 +176,9 @@
+ 
+        /* use the data classifier to determine what 802.1d tag the
+         * data frame has */
+-       qos_map = rcu_dereference(sdata->qos_map);
+-       skb->priority = cfg80211_classify8021d(skb, qos_map ?
+-                                              &qos_map->qos_map : NULL);
++       //qos_map = rcu_dereference(sdata->qos_map);
++       //skb->priority = cfg80211_classify8021d(skb, qos_map ?
++                                              //&qos_map->qos_map : NULL);
+ 
+  downgrade:
+        return ieee80211_downgrade_queue(sdata, sta, skb);
