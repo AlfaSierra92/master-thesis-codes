@@ -1,45 +1,40 @@
-## iPerf AC
+## iPerf w/ AC
 A customized iPerf with Access Categories (BK, BE, VI, VO).
 Currently extremely work in progress.
 Because patch file comes from a different iPerf version, it must be applied manually (but in this case is already applied).
 
-### Notes
+## Rock3a tweaking
+### Rock3a ath9k debug mode
 
-This is Iperf v2.0.x, a tool for measuring Internet bandwidth performance.
-See the doc directory for more documentation.
+```bash
+git clone --depth=1 --branch=main https://github.com/armbian/build 
 
-Briefly:
+cd build/
 
-Do one-time if needed:
-  dnf install gcc
-  dnf install gcc-c++
-  dnf install automake
+vim config/kernel/linux-rockchip64-current.config 
+```
 
-then to build do:
-  ./configure      -- configure for your machine
-  make             -- compile Iperf
-  make install     -- install Iperf, if desired, from root
+edit config file by adding:
 
-and to use:
-  iperf -s               (on machine "foo.bar.edu")
-  iperf -c foo.bar.edu   (on some other machine)
-  iperf -h               (for help screen)
-  iperf -v               (for version information)
+```bash
+CONFIG_ATH9K_HTC_DEBUGFS=y
+CONFIG_ATH9K_HWRNG=y
+CONFIG_ATH9K_DEBUGFS=y
+```
 
-and for more information (requires make install)
-  man iperf
+### Enable queues
 
-Finally, see INSTALL, doc/RELEASE_NOTES, and doc/DESIGN_NOTES for a bit more
+```bash
+cd ~/build/patch/kernel/archive/rockchip64-6.6
 
-The SOURCE CODE is the AUTHORITATIVE source. Any COMMENTS found in the source ARE NOT.
+cp "Armbian patch"/00550-ac.patch .
+```
 
-Copyright 1999, 2000, 2001, 2002, 2003, 2004
-The Board of Trustees of the University of Illinois
-All rights reserved
-See UI License (doc/ui_license.html) for complete details.
+### Kernel building
+Compile just the kernel with:
 
-More copyright per years 2014 - 2020
-Broadcom Corporation
-All Rights Reserved
+```bash
+./compile.sh kernel ARTIFACT_IGNORE_CACHE='yes' BOARD=rock-3a BRANCH=current
+```
 
-$Id: README,v 1.1.1.1 2004/05/18 01:50:44 kgibbs Exp $
+After a long time, copy the *.deb files found in *output/deb* into rock and installing by *dpkg -i *.deb* (can be necessary, after, to launch *apt install -f* to fix possibily missing dependences).
