@@ -1,0 +1,17 @@
+--- a/drivers/net/wireless/ath/ath9k/link.c	2024-06-21 11:46:11
++++ b/drivers/net/wireless/ath/ath9k/link.c	2024-06-21 11:47:38
+@@ -524,10 +524,10 @@
+ 			SURVEY_INFO_TIME_BUSY |
+ 			SURVEY_INFO_TIME_RX |
+ 			SURVEY_INFO_TIME_TX;
+-		survey->time += cc->cycles / div;
+-		survey->time_busy += cc->rx_busy / div;
+-		survey->time_rx += cc->rx_frame / div;
+-		survey->time_tx += cc->tx_frame / div;
++		survey->time = cc->cycles / div;
++		survey->time_busy = cc->rx_busy / div;
++		survey->time_rx = cc->rx_frame / div;
++		survey->time_tx = cc->tx_frame / div;
+ 	}
+ 
+ 	if (cc->cycles < div)

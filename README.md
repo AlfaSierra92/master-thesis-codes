@@ -30,6 +30,19 @@ cd ~/build/patch/kernel/archive/rockchip64-6.6
 cp "Armbian patch"/00550-ac.patch .
 ```
 
+### More useful stats
+```bash
+cd ~/build/patch/kernel/archive/rockchip64-6.6
+
+cp "Armbian patch"/00551-ac.patch .
+```
+
+N.b.:
+Then, you have to multiplicate *cc->cycles* with *div = common->clockrate * 1000* if needed:
+```c
+if (cc->cycles > 0) ret = cc->rx_busy * 100 / cc->cycles;
+```
+
 ### Kernel building
 Compile just the kernel with:
 
