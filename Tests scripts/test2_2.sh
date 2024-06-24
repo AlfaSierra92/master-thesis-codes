@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# * channel_time: amount of time in ms the radio spent on the channel
+# * channel_time_busy: amount of time the primary channel was sensed busy
+# * channel_time_rx: amount of time the radio spent receiving data
+# * channel_time_tx: amount of time the radio spent transmitting data
+
 # Verifica che siano stati forniti i tre argomenti necessari
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <initial_sleep> <max_concurrent_messages> <message_size>"

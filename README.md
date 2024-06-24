@@ -98,3 +98,27 @@ Finding the right indeces for the IEEE 802.11p rates may require a bit of work (
 4294967293 ->    18 Mbit/s
 4294967294 ->    24 Mbit/s
 ```
+
+
+## Tests
+### Test 1
+Server:
+```bash
+iperf -s -u -i 1
+```
+
+Client (VO - VI - BK)
+```bash
+iperf -c 224.0.67.67 -t 600 -u -b 10m -A VI
+```
+
+### Test 2
+Nodes:
+```bash
+./"Test Scripts"/on_your_marks.sh 1 5 350
+```
+
+Start:
+```bash
+./"Test Scripts"/go.sh
+```
