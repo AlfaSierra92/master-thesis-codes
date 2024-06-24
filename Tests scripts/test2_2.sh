@@ -66,7 +66,10 @@ while true; do
     echo "Pacchetti ricevuti: $received"
 
     # Calcolo del carico di canale
-    minChannelLoad=$(bc <<< "scale=3; $received / ($max_concurrent_messages * 2)")
+    busy_active=$(iw wlp1s0 survey dump | awk '/2462/{flag=1; next} /Survey/{flag=0} flag' | awk '/busy/{busy=$4} /active/{active=$4} END{print busy, active}')
+    busy=$(echo $busy_active | awk '{print $1}')
+    active=$(echo $busy_active | awk '{print $2}')
+    minChannelLoad=$(bc <<< "scale=5; $busy / $active")
     echo "Carico di canale minimo: $minChannelLoad"
 
     # Aggiornamento dello stato della macchina a stati DCC e impostazione della potenza di trasmissione
@@ -75,28 +78,18 @@ while true; do
         sleep_time=1
         set_tx_power 500  # Imposta a 10 dBm in stato restrictive
         echo "Stato: RESTRICTIVE"
-        echo $sleep_time
     elif (( $(echo "$minChannelLoad >= 0.15" | bc -l) )); then
         state="active"
         sleep_time=0.06
         set_tx_power 1000  # Imposta a 20 dBm in stato active
         echo "Stato: ACTIVE"
-        echo $sleep_time
     else
         state="relaxed"
         #sleep_time=$(bc <<< "scale=3; $initial_sleep_s / 2")
         sleep_time=0.04
         set_tx_power 15000  # Imposta a 30 dBm in stato relaxed
         echo "Stato: RELAXED"
-        echo $sleep_time
     fi
-
-    # Mantiene il tempo di sleep in un range ragionevole
-    #if (( $(echo "$sleep_time < 0.04" | bc -l) )); then
-    #    sleep_time=0.04
-    #elif (( $(echo "$sleep_time > 1" | bc -l) )); then
-    #    sleep_time=1
-    #fi
 
     echo "Prossimo invio tra $sleep_time secondi..."
     sleep $sleep_time
