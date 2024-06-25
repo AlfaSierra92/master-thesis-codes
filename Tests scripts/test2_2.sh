@@ -58,6 +58,7 @@ while true; do
     # Ricezione dei messaggi
     echo "Misurazione dei pacchetti ricevuti..."
     current_received=$(cat /sys/class/net/$interface/statistics/rx_packets)
+    busy_active=$(iw $interface survey dump | awk '/2462/{flag=1; next} /Survey/{flag=0} flag' | awk '/busy/{busy=$4} /active/{active=$4} END{print busy, active}')
     received=$((current_received - previous_received))
     if [ "$received" -eq "$startup_received" ]; then
         received=0
@@ -65,7 +66,7 @@ while true; do
     echo "Pacchetti ricevuti: $received"
 
     # Calcolo del carico di canale
-    busy_active=$(iw $interface survey dump | awk '/2462/{flag=1; next} /Survey/{flag=0} flag' | awk '/busy/{busy=$4} /active/{active=$4} END{print busy, active}')
+    #busy_active=$(iw $interface survey dump | awk '/2462/{flag=1; next} /Survey/{flag=0} flag' | awk '/busy/{busy=$4} /active/{active=$4} END{print busy, active}')
     busy=$(echo $busy_active | awk '{print $1}')
     active=$(echo $busy_active | awk '{print $2}')
     minChannelLoad=$(bc <<< "scale=5; $busy / $active")
