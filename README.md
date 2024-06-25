@@ -42,6 +42,7 @@ Then, you have to multiplicate *cc->cycles* with *div = common->clockrate * 1000
 ```c
 if (cc->cycles > 0) ret = cc->rx_busy * 100 / cc->cycles;
 ```
+Look [here](https://github.com/torvalds/linux/blob/50736169ecc8387247fe6a00932852ce7b057083/drivers/net/wireless/ath/ath9k/link.c#L506).
 
 ### Kernel building
 Compile just the kernel with:
