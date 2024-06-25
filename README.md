@@ -102,6 +102,7 @@ Finding the right indeces for the IEEE 802.11p rates may require a bit of work (
 
 
 ## Tests
+Be aware! To use `-q 0` parameter you must install *netcat-openbsd* instead of netcat-traditional (this one lacks it).
 ### Test 1
 Server:
 ```bash
