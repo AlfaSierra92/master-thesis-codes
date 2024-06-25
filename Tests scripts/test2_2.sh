@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Infos:
 # * channel_time: amount of time in ms the radio spent on the channel
 # * channel_time_busy: amount of time the primary channel was sensed busy
 # * channel_time_rx: amount of time the radio spent receiving data
