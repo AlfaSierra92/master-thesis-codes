@@ -16,8 +16,8 @@ max_concurrent_messages=$1
 message_size=$2
 output=$3
 ip_broadcast=192.168.100.255
-interface=wlp1s0e
-startup_received=$(cat /sys/class/net/wlp1s0/statistics/rx_packets)
+interface=wlp1s0
+startup_received=$(cat /sys/class/net/$interface/statistics/rx_packets)
 file=output_$(date +%Y-%m-%d_%H-%M-%S).csv
 
 # Genera un messaggio di dimensione specificata
@@ -30,7 +30,7 @@ send_messages() {
         random_port=$(( ( RANDOM % 64512 ) + 1024 ))
 
         # Send the message via UDP to the broadcast IP on the random port
-        echo -n "$message" | nc -u -w1 -q0 $ip_broadcast $random_port &
+        echo -n "$message" | nc -u -b -w1 -q0 $ip_broadcast $random_port &
     done
     wait
 }
