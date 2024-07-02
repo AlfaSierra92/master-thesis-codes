@@ -1,5 +1,5 @@
-# Come usare?
-# tcpdump -i wlp1s0 --immediate-mode -l udp | ./spr.sh
+# Come usare sul server?
+# nc -u -k -l -p 12345 > output
 
 #!/bin/bash
 
@@ -13,6 +13,8 @@ fi
 DELAY=$1
 NUM_PACKETS=$2
 PACKET_SIZE=$3
+
+IP=$(ip addr | grep 192.168.100 | awk '{print $2}')
 
 # Messaggi di debug
 echo "Delay tra gruppi di pacchetti: $DELAY secondi"
@@ -28,7 +30,7 @@ DATA=$(head -c $PACKET_SIZE </dev/urandom | base64)
 send_packets() {
     for ((i=0; i<$NUM_PACKETS; i++)); do
         #echo "Invio pacchetto $((i+1)) di $NUM_PACKETS..."
-        echo -n $DATA | nc -u -b -w1 -q0 192.168.100.255 12345 &
+        echo -e "${i};${IP};${DATA}\n\n" | nc -u -b -w1 -q0 192.168.100.255 12345 &
     done
     wait  # Attende che tutti i pacchetti siano stati inviati
     echo "Tutti i pacchetti inviati. Aspetto $DELAY secondi prima di inviare il prossimo gruppo..."
