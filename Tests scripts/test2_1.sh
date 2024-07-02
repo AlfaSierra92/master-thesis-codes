@@ -1,3 +1,6 @@
+# Come usare?
+# tcpdump -i wlp1s0 --immediate-mode -l udp | ./spr.sh
+
 #!/bin/bash
 
 # Controlla se sono stati forniti 3 argomenti
@@ -25,7 +28,7 @@ DATA=$(head -c $PACKET_SIZE </dev/urandom | base64)
 send_packets() {
     for ((i=0; i<$NUM_PACKETS; i++)); do
         #echo "Invio pacchetto $((i+1)) di $NUM_PACKETS..."
-        echo -n $DATA | nc -u -w1 127.0.0.1 12345 &
+        echo -n $DATA | nc -u -b -w1 -q0 192.168.100.255 12345 &
     done
     wait  # Attende che tutti i pacchetti siano stati inviati
     echo "Tutti i pacchetti inviati. Aspetto $DELAY secondi prima di inviare il prossimo gruppo..."
