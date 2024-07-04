@@ -16,6 +16,12 @@ DELAY=$1
 NUM_PACKETS=$2
 PACKET_SIZE=$3
 
+# File di output locale
+OUTPUT_FILE="output_sender.txt"
+
+# Pulisce il file di output locale
+> $OUTPUT_FILE
+
 IP=$(ip addr | grep 192.168.100 | awk '{print $2}')
 
 # Messaggi di debug
@@ -32,7 +38,8 @@ DATA=$(head -c $PACKET_SIZE </dev/urandom | base64)
 send_packets() {
     for ((i=0; i<$NUM_PACKETS; i++)); do
         #echo "Invio pacchetto $((i+1)) di $NUM_PACKETS..."
-        echo -e "${i};${IP};${DATA}\n\n" | nc -u -b -w1 -q0 192.168.100.255 12345 &
+        echo -e "${i};${IP}\n\n" | nc -u -b -w1 -q0 192.168.100.255 12345 &
+        echo -e "${i};${IP}\n\n" >> $OUTPUT_FILE
     done
     wait  # Attende che tutti i pacchetti siano stati inviati
     echo "Tutti i pacchetti inviati. Aspetto $DELAY secondi prima di inviare il prossimo gruppo..."
@@ -40,8 +47,12 @@ send_packets() {
 }
 
 # Chiama la funzione per inviare i pacchetti in un ciclo
-while true; do
+#while true; do
+#    send_packets
+#done
+for ((j=0; j<10; j++)); do
     send_packets
 done
+
 
 echo "Invio dei pacchetti completato."

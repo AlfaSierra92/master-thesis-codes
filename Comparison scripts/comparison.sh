@@ -1,5 +1,8 @@
 #!/bin/bash
 
+scp root@rock3:/root/output_sender.txt .
+scp root@rock3_1:/root/output_receiver.txt .
+
 # File di output
 SENDER_FILE="output_sender.txt"
 RECEIVER_FILE="output_receiver.txt"
@@ -13,7 +16,7 @@ sort $SENDER_FILE > $SORTED_SENDER_FILE
 sort $RECEIVER_FILE > $SORTED_RECEIVER_FILE
 
 # Confronta i file ordinati e salva le differenze in un file di output
-diff $SORTED_SENDER_FILE $SORTED_RECEIVER_FILE > diff_output.txt
+diff -u $SORTED_SENDER_FILE $SORTED_RECEIVER_FILE > diff_output.txt
 
 # Verifica se ci sono differenze
 if [ -s diff_output.txt ]; then
