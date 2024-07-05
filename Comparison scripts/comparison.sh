@@ -18,9 +18,12 @@ sort $RECEIVER_FILE > $SORTED_RECEIVER_FILE
 # Confronta i file ordinati e salva le differenze in un file di output
 diff -u $SORTED_SENDER_FILE $SORTED_RECEIVER_FILE > diff_output.txt
 
+# Calcola i pacchetti persi
+LOSS=$(diff $SORTED_SENDER_FILE $SORTED_RECEIVER_FILE | diffstat -t | sed -n '2p' | cut -d',' -f2)
+
 # Verifica se ci sono differenze
 if [ -s diff_output.txt ]; then
-  echo "Sono stati persi dei pacchetti. Controlla diff_output.txt per i dettagli."
+  echo "Sono stati persi $LOSS pacchetti. Controlla diff_output.txt per i dettagli."
 else
   echo "Tutti i pacchetti sono stati ricevuti correttamente."
 fi
