@@ -106,25 +106,56 @@ Finding the right indeces for the IEEE 802.11p rates may require a bit of work (
 
 
 ## Tests
-Be aware! To use `-q 0` parameter you must install *netcat-openbsd* instead of netcat-traditional (this one lacks it).
-### Test 1
-Server:
-```bash
-iperf -s -u -i 1
-```
+Be aware! To use `-q 0` parameter you must install *netcat-openbsd* instead of netcat-traditional (this one lacks of it).
 
-Client (VO - VI - BK)
-```bash
-iperf -c 224.0.67.67 -t 600 -u -b 10m -A VI
-```
+### Test 1 (iPerf powered)
+The Test 1 consists in the running of multiple instances of iPerf; one device have to operate as a "server" and the other ones as a "client". We can use different class of priorities.
 
-### Test 2
-Nodes:
-```bash
-./"Test Scripts"/on_your_marks.sh 1 5 350
-```
+- **Server:**
+  ```bash
+  iperf -s -u -i 1
+  ```
 
-Start:
-```bash
-./"Test Scripts"/go.sh
-```
+- **Client (VO - VI - BK):**
+  ```bash
+  iperf -c 224.0.67.67 -t 600 -u -b 10m -A VI
+  ```
+
+### Test 2 (ncat powered)
+The Test 2 consists in the running of multiple instances of *netcat*, in order to try to create congestion on the medium. Then, it tunes the number of packets transmitted accordly to a sort of pioneering DCC implementation.
+
+We use *on_your_mark.sh* script to be able to launch the script on every devices at the same time; the scripts startup are triggered by *go.sh* script launch.
+
+- Nodes:
+
+  `"Usage: ./on_your_marks.sh <max_concurrent_messages> <message_size>"`
+  ```bash
+  ./"Test Scripts"/on_your_marks.sh 1 5 350
+  ```
+
+- Start:
+  ```bash
+  ./"Test Scripts"/go.sh
+  ```
+
+### Lost packets test
+Test to check the number of lost packets.
+
+- **Server:**
+  ```bash
+  ./"Tests scripts"/test2_1.sh
+  ```
+
+- **Client:**
+
+  `"Usage: $0 <delay> <number_of_packets> <packet_size>"`
+  ```bash
+  ./"Comparison Scripts"/receiver.sh 1 5 530
+  ```
+
+- **Comparison:**
+
+  To make comparison between tx and rx packets.
+  ```bash
+  ./"Comparison Scripts"/comparison.sh
+  ```
