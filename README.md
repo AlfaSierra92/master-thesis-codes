@@ -106,7 +106,6 @@ Finding the right indeces for the IEEE 802.11p rates may require a bit of work (
 
 
 ## Tests
-Be aware! To use `-q 0` parameter you must install *netcat-openbsd* instead of netcat-traditional (this one lacks of it).
 
 ### Test 1 (iPerf powered)
 The Test 1 consists in the running of multiple instances of iPerf; one device have to operate as a "server" and the other ones as a "client". We can use different class of priorities.
@@ -125,6 +124,8 @@ The Test 1 consists in the running of multiple instances of iPerf; one device ha
 See *test1.xlsx*.
 
 ### Test 2 (ncat powered)
+*Be aware! To use `-q 0` parameter you must install *netcat-openbsd* instead of netcat-traditional (this one lacks of it).*
+
 The Test 2 consists in the running of multiple instances of *netcat*, in order to try to create congestion on the medium. Then, it tunes the number of packets transmitted accordly to a sort of pioneering DCC implementation.
 
 We use *on_your_mark.sh* script to be able to launch the script on every devices at the same time; the scripts startup are triggered by *go.sh* script launch.
