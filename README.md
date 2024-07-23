@@ -121,6 +121,9 @@ The Test 1 consists in the running of multiple instances of iPerf; one device ha
   iperf -c 224.0.67.67 -t 600 -u -b 10m -A VI
   ```
 
+#### Results
+See *test1.xlsx*.
+
 ### Test 2 (ncat powered)
 The Test 2 consists in the running of multiple instances of *netcat*, in order to try to create congestion on the medium. Then, it tunes the number of packets transmitted accordly to a sort of pioneering DCC implementation.
 
@@ -137,6 +140,9 @@ We use *on_your_mark.sh* script to be able to launch the script on every devices
   ```bash
   ./"Test Scripts"/go.sh
   ```
+
+#### Results
+See *test2.xlsx*.
 
 ### Lost packets test
 Test to check the number of lost packets.
@@ -159,3 +165,6 @@ Test to check the number of lost packets.
   ```bash
   ./"Comparison Scripts"/comparison.sh
   ```
+
+#### Results
+*Currently work in progress...*
