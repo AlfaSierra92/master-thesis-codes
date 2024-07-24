@@ -2,6 +2,7 @@
 
 # Come usare sul server?
 # nc -u -k -l -p 12345 > output
+# Usa comunque receiver.sh
 
 #!/bin/bash
 
@@ -36,12 +37,15 @@ DATA=$(head -c $PACKET_SIZE </dev/urandom | base64)
 
 # Funzione per inviare i pacchetti
 send_packets() {
+    local packet_data=""
     for ((i=0; i<$NUM_PACKETS; i++)); do
-        #echo "Invio pacchetto $((i+1)) di $NUM_PACKETS..."
-        echo -e "${i};${IP}\n\n" | nc -u -b -w1 -q0 192.168.100.255 12345 &
-        echo -e "${i};${IP}\n\n" >> $OUTPUT_FILE
+        local packet="${i};${IP};${DATA}\n\n"
+        echo -e "$packet" | nc -u -b -w1 -q0 192.168.100.255 12345 &
+        # echo -e "${i};${IP}\n\n" >> $OUTPUT_FILE
+        packet_data+="${i};${IP}\n\n"
     done
     wait  # Attende che tutti i pacchetti siano stati inviati
+    echo -e "$packet_data" >> $OUTPUT_FILE
     echo "Tutti i pacchetti inviati. Aspetto $DELAY secondi prima di inviare il prossimo gruppo..."
     sleep $DELAY
 }
