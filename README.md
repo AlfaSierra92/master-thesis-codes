@@ -105,7 +105,29 @@ Finding the right indeces for the IEEE 802.11p rates may require a bit of work (
 ```
 
 
-## Tests
+## Final tests
+
+- **C0**: Caso senza congestione: c1 e c2 spenti
+- **C1**: Caso traffico stradale: c1 e c2 con cam ogni 5 ms in broadcast
+- **C2**: Caso congestione severa: c1 client e c2 server con trasmissione udp in flooding
+- **T1**: Caso t1 e t2 fanno cose 1: iperf senza qos con una connessione con due flussi tcp (*t1 client e t2 server*)
+- **T2**: Caso t1 e t2 fanno cose 2: come T1 ma usando VO e BK (*t1 client e t2 server*)
+
+I test da eseguire sono:
+1. T1 in contemporanea a C0
+2. T1 in contemporanea a C1
+3. T1 in contemporanea a C2
+4. T2 in contemporanea a C0
+5. T2 in contemporanea a C1
+6. T2 in contemporanea a C2
+
+### Test T1_C0
+
+### Test T1_C1
+
+### Test T1_C2
+
+## Evaluation tests
 
 ### Test 1 (iPerf powered)
 The Test 1 consists in the running of multiple instances of iPerf; one device have to operate as a "server" and the other ones as a "client". We can use different class of priorities.
