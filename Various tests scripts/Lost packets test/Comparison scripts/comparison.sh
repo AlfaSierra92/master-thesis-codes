@@ -19,7 +19,8 @@ sort $RECEIVER_FILE > $SORTED_RECEIVER_FILE
 diff -u $SORTED_SENDER_FILE $SORTED_RECEIVER_FILE > diff_output.txt
 
 # Calcola i pacchetti persi
-LOSS=$(diff $SORTED_SENDER_FILE $SORTED_RECEIVER_FILE | diffstat -t | sed -n '2p' | cut -d',' -f2)
+# LOSS=$(diff $SORTED_SENDER_FILE $SORTED_RECEIVER_FILE | diffstat -t | sed -n '2p' | cut -d',' -f2)
+LOSS=$(grep -c '^-0;192.168.100.100/24$' diff_output.txt)
 
 # Verifica se ci sono differenze
 if [ -s diff_output.txt ]; then
