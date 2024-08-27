@@ -121,12 +121,6 @@ I test da eseguire sono:
 5. T2 in contemporanea a C1
 6. T2 in contemporanea a C2
 
-### Test T1_C0
-
-### Test T1_C1
-
-### Test T1_C2
-
 ## Evaluation tests
 
 ### Test 1 (iPerf powered)
