@@ -1,6 +1,12 @@
 # DCCo802.11
 
-It's just a Github readme; for further details about my work and the currently state of play don't look up and [look here 👀](https://antoniosolida.notion.site/State-of-play-e6e839db40084c228981ff2eb598a522?pvs=4). 
+Official repository of all of the stuff mentioned into master thesis.
+
+There are different folders:
+- *Patches*: patches used for Rock and iPerf tweaking.
+- *Thesis tests*: python scripts used for plotting (they are available, along with numeric results, into a proper [repository](https://github.com/AlfaSierra92/ACPlot)).
+- *Various tests scripts*: every script, used or not, is in this folder (along with some that are not used).
+- *iperf-2.2.0-patched*: source code of iPerf v2.2.0 already patched.
 
 ## iPerf w/ AC
 A customized iPerf with Access Categories (BK, BE, VI, VO).
